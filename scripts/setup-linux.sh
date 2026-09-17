@@ -157,6 +157,35 @@ require_command() {
   fi
 }
 
+# ── 系统依赖包名兼容（Ubuntu 24.04+ 时间64位重命名） ──────────────
+# Ubuntu 24.04+ 对部分库包进行了时间64位兼容重命名，包名从 libfoo1
+# 变为 libfoo1t64。此处通过 dpkg -l 检测实际可用包名并返回映射。
+resolve_pkg() {
+  local original="$1"
+  # 如果原包名已存在则直接返回
+  if apt-cache show "$original" &>/dev/null; then
+    echo "$original"
+    return
+  fi
+  # 尝试 libfoo1t64 变体
+  local t64="${original}t64"
+  if apt-cache show "$t64" &>/dev/null; then
+    echo "$t64"
+    return
+  fi
+  # 兜底：原包名（apt 会给出明确错误）
+  echo "$original"
+}
+
+# 将包列表中的每个包名映射到实际可用版本
+resolve_pkg_list() {
+  local resolved=()
+  for pkg in "$@"; do
+    resolved+=("$(resolve_pkg "$pkg")")
+  done
+  echo "${resolved[@]}"
+}
+
 # ── 系统依赖安装 ──────────────────────────────────────────
 install_system_deps() {
   section "安装系统依赖"
@@ -166,41 +195,25 @@ install_system_deps() {
   export DEBIAN_FRONTEND=noninteractive
   apt-get update -qq
 
+  # 基础构建工具列表（包名将自动解析为可用版本）
+  local base_pkgs=(
+    build-essential curl wget file git sudo
+    libssl-dev pkg-config zlib1g-dev liblzma-dev libzstd-dev
+    libclang-dev llvm-dev libnss3 libxss1
+    libdbus-1-3 libc6 libdrm2 libgbm1
+    libpango-1.0-0 libpangocairo-1.0-0
+    libxdamage1 libxrandr2 libxi1 libxtst6 libatk1.0-0 libatk-bridge2.0-0
+  )
+  local desktop_pkgs=(
+    libgtk-3-dev libnotify-dev libfuse2 libasound2 libcups2 libgtk2.0-0
+  )
+
+  local resolved_base resolved_desktop
+  resolved_base="$(resolve_pkg_list "${base_pkgs[@]}")"
+  resolved_desktop="$(resolve_pkg_list "${desktop_pkgs[@]}")"
+
   info "安装基础构建工具..."
-  apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    wget \
-    file \
-    git \
-    sudo \
-    libfuse2 \
-    libssl-dev \
-    pkg-config \
-    zlib1g-dev \
-    liblzma-dev \
-    libzstd-dev \
-    libclang-dev \
-    llvm-dev \
-    libgtk-3-dev \
-    libnotify-dev \
-    libnss3 \
-    libxss1 \
-    libasound2 \
-    libcups2 \
-    libdbus-1-3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libc6 \
-    libdrm2 \
-    libgbm1 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libgtk2.0-0 \
-    libxdamage1 \
-    libxrandr2 \
-    libxi1 \
-    libxtst6
+  apt-get install -y --no-install-recommends $resolved_base $resolved_desktop
 
   # sharp 需要 libvips
   info "安装 libvips (sharp 依赖)..."
@@ -218,37 +231,25 @@ install_system_deps_vps() {
   export DEBIAN_FRONTEND=noninteractive
   apt-get update -qq
 
+  # 基础构建工具列表（包名将自动解析为可用版本）
+  local base_pkgs=(
+    build-essential curl wget file git sudo
+    libssl-dev pkg-config zlib1g-dev liblzma-dev libzstd-dev
+    libclang-dev llvm-dev libnss3 libxss1
+    libdbus-1-3 libc6 libdrm2 libgbm1
+    libpango-1.0-0 libpangocairo-1.0-0
+    libxdamage1 libxrandr2 libxi1 libxtst6 libatk1.0-0 libatk-bridge2.0-0
+  )
+  local desktop_pkgs=(
+    libasound2 libcups2 libgtk2.0-0 libfuse2
+  )
+
+  local resolved_base resolved_desktop
+  resolved_base="$(resolve_pkg_list "${base_pkgs[@]}")"
+  resolved_desktop="$(resolve_pkg_list "${desktop_pkgs[@]}")"
+
   info "安装基础构建工具..."
-  apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    wget \
-    file \
-    git \
-    sudo \
-    libssl-dev \
-    pkg-config \
-    zlib1g-dev \
-    liblzma-dev \
-    libzstd-dev \
-    libclang-dev \
-    llvm-dev \
-    libnss3 \
-    libxss1 \
-    libasound2 \
-    libcups2 \
-    libdbus-1-3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libc6 \
-    libdrm2 \
-    libgbm1 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libxdamage1 \
-    libxrandr2 \
-    libxi1 \
-    libxtst6
+  apt-get install -y --no-install-recommends $resolved_base $resolved_desktop
 
   # ripgrep（VPS 模式直接从系统安装）
   info "安装 ripgrep..."
