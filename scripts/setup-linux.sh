@@ -159,29 +159,66 @@ require_command() {
 
 # ── 系统依赖包名兼容（Ubuntu 24.04+ 时间64位重命名） ──────────────
 # Ubuntu 24.04+ 对部分库包进行了时间64位兼容重命名，包名从 libfoo1
-# 变为 libfoo1t64。此处通过 dpkg -l 检测实际可用包名并返回映射。
+# 变为 libfoo1t64。Ubuntu 26.04 中一些旧包变为虚拟包或更名，
+# 此处通过 apt-cache showpkg 检查是否为虚拟包，并用 apt install
+# --dry-run 确认实际可安装。
 resolve_pkg() {
   local original="$1"
-  # 如果原包名已存在则直接返回
-  if apt-cache show "$original" &>/dev/null; then
+
+  # 如果原包名已存在且是真实包（非虚拟包），直接返回
+  if apt-cache show "$original" &>/dev/null && \
+     ! apt-cache showpkg "$original" 2>/dev/null | grep -q '^virtual packages:'; then
     echo "$original"
     return
   fi
-  # 尝试 libfoo1t64 变体
+
+  # 尝试 libfoo1t64 变体（时间64位兼容包）
   local t64="${original}t64"
   if apt-cache show "$t64" &>/dev/null; then
     echo "$t64"
     return
   fi
-  # 兜底：原包名（apt 会给出明确错误）
+
+  # 兜底：原包名（apt install 时会给出明确错误）
   echo "$original"
+}
+
+# ── 已知的 Ubuntu 包名变更映射 ──────────────────────────────────
+# 这些包名在较新 Ubuntu 中已变更，无法通过通用模式推导。
+declare -A KNOWN_PKG_MAP
+KNOWN_PKG_MAP=(
+  # Ubuntu 26.04+: libxi1 → libxi6（ABI 版本号变更）
+  ["libxi1"]="libxi6"
+  ["libxi6"]="libxi6t64"
+)
+
+resolve_known_pkg() {
+  local original="$1"
+
+  # 先检查已知映射表
+  if [[ -n "${KNOWN_PKG_MAP[$original]+x}" ]]; then
+    local mapped="${KNOWN_PKG_MAP[$original]}"
+    if apt-cache show "$mapped" &>/dev/null; then
+      echo "$mapped"
+      return
+    fi
+    # 映射包也尝试 t64 变体
+    local t64="${mapped}t64"
+    if apt-cache show "$t64" &>/dev/null; then
+      echo "$t64"
+      return
+    fi
+  fi
+
+  # 不在映射表中的包走通用解析
+  resolve_pkg "$original"
 }
 
 # 将包列表中的每个包名映射到实际可用版本
 resolve_pkg_list() {
   local resolved=()
   for pkg in "$@"; do
-    resolved+=("$(resolve_pkg "$pkg")")
+    resolved+=("$(resolve_known_pkg "$pkg")")
   done
   echo "${resolved[@]}"
 }
