@@ -190,6 +190,8 @@ KNOWN_PKG_MAP=(
   # Ubuntu 26.04+: libxi1 → libxi6（ABI 版本号变更）
   ["libxi1"]="libxi6"
   ["libxi6"]="libxi6t64"
+  # Ubuntu 26.04+: libasound2 改为虚拟包，实际包名为 libasound2t64
+  ["libasound2"]="libasound2t64"
 )
 
 resolve_known_pkg() {

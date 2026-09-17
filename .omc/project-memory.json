@@ -1,0 +1,324 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1789671457409,
+  "projectRoot": "/Users/a1/Source/cc-haha",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.2.4",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": "npm run start",
+    "scripts": {
+      "claude-haha": "bun --no-env-file run ./bin/claude-haha",
+      "start": "bun --no-env-file run ./bin/claude-haha",
+      "perf:local-index": "bun run scripts/perf/local-index-benchmark.ts",
+      "perf:local-index:10k": "bun run scripts/perf/local-index-benchmark.ts --sessions 10000 --runs 20",
+      "check:pr": "bun run scripts/pr/check-pr.ts",
+      "check:impact": "bun run scripts/pr/impact-report.ts",
+      "check:policy": "bun test ./scripts/pr/bun-test-filter.test.ts ./scripts/pr/change-policy.test.ts ./scripts/pr/changed-files.test.ts ./scripts/pr/dead-imports.test.ts ./scripts/pr/module-graph.test.ts ./scripts/pr/pr-triage-workflow.test.ts ./scripts/pr/pr-quality-workflow.test.ts ./scripts/pr/release-workflow.test.ts ./scripts/pr/quality-contract.test.ts ./scripts/pr/test-environment.test.ts ./scripts/pr/run-swift-checks.test.ts ./scripts/quality-gate/package-smoke/index.test.ts ./scripts/release-update-metadata.test.ts ./scripts/git-hooks/install.test.ts ./scripts/quality-gate/quarantine.test.ts ./scripts/quality-gate/coverage.test.ts ./scripts/quality-gate/provider-smoke/execute.test.ts ./scripts/quality-gate/desktop-smoke/execute.test.ts ./scripts/quality-gate/providerTargets.test.ts ./scripts/quality-gate/runner.test.ts ./scripts/quality-gate/sandbox.test.ts ./scripts/quality-gate/agent-flow/scenarios.test.ts ./scripts/quality-gate/agent-flow/live.test.ts ./scripts/quality-gate/desktop-smoke/deterministic.test.ts ./scripts/quality-gate/computer-use-live-smoke.test.ts ./scripts/quality-gate/computer-use-signed-chain.test.ts",
+      "check:server": "bun run scripts/pr/run-server-tests.ts",
+      "check:provider-contract": "bun run scripts/pr/run-provider-contract-tests.ts",
+      "check:chat-contract": "bun run scripts/pr/run-chat-contract-tests.ts",
+      "check:agent-flow": "bun run scripts/quality-gate/agent-flow/index.ts",
+      "check:desktop-ui-smoke": "bun run scripts/quality-gate/desktop-smoke/deterministic-cli.ts",
+      "check:desktop": "cd desktop && bun run lint && bun run test -- --run && bun run build",
+      "check:electron": "cd desktop && bun run check:electron",
+      "check:adapters": "cd adapters && bun test",
+      "check:native": "bun run check:swift && cd desktop && bun run build:sidecars && bun run test:compiled-sidecar-smoke && bun run check:electron && CSC_IDENTITY_AUTO_DISCOVERY=false bun run electron:package:dir && cd .. && bun run test:package-smoke:current",
+      "check:docs": "npm --prefix site ci --loglevel=error && npm --prefix site run --loglevel=error build && npm --prefix site run --loglevel=error check",
+      "check:persistence-upgrade": "bun run scripts/quality-gate/persistence-upgrade.ts",
+      "check:quarantine": "bun run scripts/quality-gate/quarantine.ts --enforce-review-date",
+      "check:coverage": "bun run scripts/quality-gate/coverage.ts",
+      "hooks:install": "bun run scripts/git-hooks/install.ts",
+      "verify": "bun run quality:pr",
+      "quality:gate": "bun run scripts/quality-gate/index.ts",
+      "quality:verify": "bun run quality:pr",
+      "quality:providers": "bun run scripts/quality-gate/providers.ts",
+      "quality:pr": "bun run quality:gate --mode pr",
+      "quality:push": "bun run quality:gate --mode pr --skip coverage",
+      "quality:baseline": "bun run quality:gate --mode baseline",
+      "quality:release": "bun run quality:gate --mode release",
+      "quality:smoke": "bun run quality:gate --mode baseline --allow-live --only 'provider-smoke:*' --only 'desktop-smoke:*'",
+      "test:package-smoke": "bun run scripts/quality-gate/package-smoke/index.ts",
+      "test:package-smoke:current": "bun run scripts/quality-gate/package-smoke/current.ts",
+      "docs:dev": "npm --prefix site run dev",
+      "docs:build": "npm --prefix site run build",
+      "docs:preview": "npm --prefix site run preview",
+      "check:agent-flow:live": "bun run scripts/quality-gate/agent-flow/live-cli.ts",
+      "check:swift": "bun run scripts/pr/run-swift-checks.ts",
+      "check:computer-use-live-smoke": "bun run scripts/quality-gate/computer-use-live-smoke.ts",
+      "check:computer-use-signed-chain": "bun run scripts/quality-gate/computer-use-signed-chain.ts"
+    }
+  },
+  "conventions": {
+    "namingStyle": "camelCase/PascalCase",
+    "importStyle": "ES modules",
+    "testPattern": "*.test.ts",
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "bin",
+      "docs",
+      "scripts",
+      "src",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "adapters": {
+      "path": "adapters",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1789671457403,
+      "keyFiles": [
+        "AGENTS.md",
+        "README.md",
+        "bun.lock",
+        "package.json",
+        "tsconfig.json"
+      ]
+    },
+    "bin": {
+      "path": "bin",
+      "purpose": "Executable scripts",
+      "fileCount": 1,
+      "lastAccessed": 1789671457404,
+      "keyFiles": [
+        "claude-haha"
+      ]
+    },
+    "desktop": {
+      "path": "desktop",
+      "purpose": null,
+      "fileCount": 15,
+      "lastAccessed": 1789671457406,
+      "keyFiles": [
+        "AGENTS.md",
+        "README.md",
+        "bun.lock",
+        "bunfig.toml",
+        "eslint.config.js"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 1,
+      "lastAccessed": 1789671457406,
+      "keyFiles": [
+        "AGENTS.md"
+      ]
+    },
+    "fixtures": {
+      "path": "fixtures",
+      "purpose": "Test fixtures",
+      "fileCount": 1,
+      "lastAccessed": 1789671457406,
+      "keyFiles": [
+        "e8c7b0.json"
+      ]
+    },
+    "native": {
+      "path": "native",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1789671457406,
+      "keyFiles": []
+    },
+    "release-notes": {
+      "path": "release-notes",
+      "purpose": null,
+      "fileCount": 45,
+      "lastAccessed": 1789671457406,
+      "keyFiles": [
+        "v0.1.0.md",
+        "v0.1.1.md",
+        "v0.1.2.md",
+        "v0.1.3.md",
+        "v0.1.4.md"
+      ]
+    },
+    "runtime": {
+      "path": "runtime",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1789671457406,
+      "keyFiles": [
+        "requirements-win.txt",
+        "test_helpers.py",
+        "win_cursor_badge.py",
+        "win_helper.py"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 10,
+      "lastAccessed": 1789671457407,
+      "keyFiles": [
+        "cli-launcher.test.ts",
+        "count-app-loc.ts",
+        "refresh-windows-update-metadata.test.ts",
+        "refresh-windows-update-metadata.ts",
+        "release-update-metadata.test.ts"
+      ]
+    },
+    "site": {
+      "path": "site",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1789671457407,
+      "keyFiles": [
+        "AGENTS.md",
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "vite.config.js"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 23,
+      "lastAccessed": 1789671457407,
+      "keyFiles": [
+        "AGENTS.md",
+        "QueryEngine.ts",
+        "Task.ts",
+        "Tool.ts",
+        "commands.ts"
+      ]
+    },
+    "stubs": {
+      "path": "stubs",
+      "purpose": "Stub implementations",
+      "fileCount": 2,
+      "lastAccessed": 1789671457407,
+      "keyFiles": [
+        "ant-claude-for-chrome-mcp.ts",
+        "color-diff-napi.ts"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 3,
+      "lastAccessed": 1789671457407,
+      "keyFiles": [
+        "formatTokens.test.ts",
+        "mediaRecoveryAndEstimation.test.ts",
+        "reorderAssistantToolUseBlocks.test.ts"
+      ]
+    },
+    "desktop/build": {
+      "path": "desktop/build",
+      "purpose": "Build output",
+      "fileCount": 5,
+      "lastAccessed": 1789671457408,
+      "keyFiles": [
+        "check-install-processes.ps1",
+        "entitlements.mac.inherit.plist",
+        "entitlements.mac.plist"
+      ]
+    },
+    "desktop/docs": {
+      "path": "desktop/docs",
+      "purpose": "Documentation",
+      "fileCount": 2,
+      "lastAccessed": 1789671457408,
+      "keyFiles": [
+        "component-library-plan.md",
+        "redesign-paper-ink-seal.md"
+      ]
+    },
+    "docs/public": {
+      "path": "docs/public",
+      "purpose": "Public files",
+      "fileCount": 2,
+      "lastAccessed": 1789671457408,
+      "keyFiles": [
+        "CNAME",
+        "ads.txt"
+      ]
+    },
+    "site/public": {
+      "path": "site/public",
+      "purpose": "Public files",
+      "fileCount": 0,
+      "lastAccessed": 1789671457408,
+      "keyFiles": []
+    },
+    "site/scripts": {
+      "path": "site/scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 4,
+      "lastAccessed": 1789671457408,
+      "keyFiles": [
+        "check-docs.mjs",
+        "generate-docs-manifest.mjs",
+        "image-size.mjs"
+      ]
+    },
+    "site/src": {
+      "path": "site/src",
+      "purpose": "Source code",
+      "fileCount": 2,
+      "lastAccessed": 1789671457408,
+      "keyFiles": [
+        "App.jsx",
+        "main.jsx"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "scripts/setup-linux.sh",
+      "accessCount": 7,
+      "lastAccessed": 1789671570251,
+      "type": "directory"
+    },
+    {
+      "path": "",
+      "accessCount": 1,
+      "lastAccessed": 1789671513887,
+      "type": "directory"
+    }
+  ],
+  "userDirectives": []
+}
