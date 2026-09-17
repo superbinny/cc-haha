@@ -100,6 +100,8 @@ cp .env.example .env
 
 需要 [Bun](https://bun.sh) 和 Git。这条路只跑 CLI，桌面端的构建方式和本地服务参数见 [命令行](../cli/index.md)。
 
+> **Ubuntu/Debian 服务器用户**：推荐使用 [VPS 一键安装脚本](./build-ubuntu.md#vps-模式无桌面环境推荐服务器使用)，自动安装依赖、编译并安装全局命令入口 `claude-haha`。
+
 ## 升级
 
 **应用内更新（推荐）。** 打开「设置 → 关于 → 应用更新」，点「检查更新」。它会比对当前版本和 GitHub Releases 上的最新版本，有新版就下载，下载完提示「安装并重启」。
